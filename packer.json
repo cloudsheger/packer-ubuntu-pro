@@ -1,0 +1,38 @@
+{
+    "builders": [
+      {
+        "type": "amazon-ebs",
+        "region": "us-east-1",
+        "instance_type": "t2.micro",
+        "ami_name": "packer-base-ubuntu-{{timestamp}}",
+        "profile": "default",
+        "source_ami_filter": {
+            "filters": {
+                "virtualization-type": "hvm",
+                "name": "ubuntu-pro-server*20.04-amd64*",
+                "root-device-type": "ebs"
+              },
+          "owners": ["099720109477"],
+          "most_recent": true
+        },
+      "ssh_username": "ubuntu"
+      }
+    ],
+    "provisioners": [
+      {
+        "type": "shell",
+        "inline": [
+          "cloud-init status --wait",
+          "sudo apt-get update && sudo apt-get upgrade -y"
+        ]
+      },
+      {
+        "type": "shell",
+        "inline": [
+          "sudo ua detach --assume-yes",
+          "sudo rm -rf /var/log/ubuntu-advantage.log",
+          "sudo cloud-init clean --machine-id"
+        ]
+      }
+    ]
+}
